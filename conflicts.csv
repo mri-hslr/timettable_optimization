@@ -1,0 +1,4 @@
+Conflict_Type,Teacher,Room,Day,Time
+Double Booking,Mr. Smith,101,Monday,09:00-10:00
+Overlapping Classes,Mrs. Johnson,102,Monday,10:00-10:30
+Unavailable Room,103,Tuesday,10:00-11:00

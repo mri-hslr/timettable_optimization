@@ -1,0 +1,16 @@
+Teacher,Subject,Classroom,Day,Start_Time,End_Time
+Mr. Smith,Mathematics,Room 101,Monday,09:00,10:00
+Ms. Johnson,Physics,Room 102,Monday,10:00,11:00
+Dr. Brown,Chemistry,Room 103,Monday,11:00,12:00
+Mr. Smith,Mathematics,Room 101,Tuesday,09:00,10:00
+Ms. Johnson,Biology,Room 104,Tuesday,10:00,11:00
+Dr. Brown,Physics,Room 102,Tuesday,11:00,12:00
+Mr. White,English,Room 105,Wednesday,09:00,10:00
+Ms. Davis,History,Room 106,Wednesday,10:00,11:00
+Dr. Taylor,Geography,Room 107,Wednesday,11:00,12:00
+Ms. Johnson,Biology,Room 104,Thursday,09:00,10:00
+Mr. Smith,Mathematics,Room 101,Thursday,10:00,11:00
+Dr. Brown,Chemistry,Room 103,Thursday,11:00,12:00
+Mr. White,English,Room 105,Friday,09:00,10:00
+Ms. Davis,History,Room 106,Friday,10:00,11:00
+Dr. Taylor,Geography,Room 107,Friday,11:00,12:00
