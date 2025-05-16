@@ -1,0 +1,8 @@
+---
+title: "Exported Timetable"
+output: pdf_document
+---
+
+```{r, echo=FALSE}
+knitr::kable(read.csv("../dataset.csv"))
+```

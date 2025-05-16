@@ -1,0 +1,122 @@
+[
+  {
+    "Teacher": "Mr. Smith",
+    "Subject": "Mathematics",
+    "Classroom": "Room 101",
+    "Day": "Monday",
+    "Start_Time": "09:00",
+    "End_Time": "10:00"
+  },
+  {
+    "Teacher": "Ms. Johnson",
+    "Subject": "Physics",
+    "Classroom": "Room 102",
+    "Day": "Monday",
+    "Start_Time": "10:00",
+    "End_Time": "11:00"
+  },
+  {
+    "Teacher": "Dr. Brown",
+    "Subject": "Chemistry",
+    "Classroom": "Room 103",
+    "Day": "Monday",
+    "Start_Time": "11:00",
+    "End_Time": "12:00"
+  },
+  {
+    "Teacher": "Mr. Smith",
+    "Subject": "Mathematics",
+    "Classroom": "Room 101",
+    "Day": "Tuesday",
+    "Start_Time": "09:00",
+    "End_Time": "10:00"
+  },
+  {
+    "Teacher": "Ms. Johnson",
+    "Subject": "Biology",
+    "Classroom": "Room 104",
+    "Day": "Tuesday",
+    "Start_Time": "10:00",
+    "End_Time": "11:00"
+  },
+  {
+    "Teacher": "Dr. Brown",
+    "Subject": "Physics",
+    "Classroom": "Room 102",
+    "Day": "Tuesday",
+    "Start_Time": "11:00",
+    "End_Time": "12:00"
+  },
+  {
+    "Teacher": "Mr. White",
+    "Subject": "English",
+    "Classroom": "Room 105",
+    "Day": "Wednesday",
+    "Start_Time": "09:00",
+    "End_Time": "10:00"
+  },
+  {
+    "Teacher": "Ms. Davis",
+    "Subject": "History",
+    "Classroom": "Room 106",
+    "Day": "Wednesday",
+    "Start_Time": "10:00",
+    "End_Time": "11:00"
+  },
+  {
+    "Teacher": "Dr. Taylor",
+    "Subject": "Geography",
+    "Classroom": "Room 107",
+    "Day": "Wednesday",
+    "Start_Time": "11:00",
+    "End_Time": "12:00"
+  },
+  {
+    "Teacher": "Ms. Johnson",
+    "Subject": "Biology",
+    "Classroom": "Room 104",
+    "Day": "Thursday",
+    "Start_Time": "09:00",
+    "End_Time": "10:00"
+  },
+  {
+    "Teacher": "Mr. Smith",
+    "Subject": "Mathematics",
+    "Classroom": "Room 101",
+    "Day": "Thursday",
+    "Start_Time": "10:00",
+    "End_Time": "11:00"
+  },
+  {
+    "Teacher": "Dr. Brown",
+    "Subject": "Chemistry",
+    "Classroom": "Room 103",
+    "Day": "Thursday",
+    "Start_Time": "11:00",
+    "End_Time": "12:00"
+  },
+  {
+    "Teacher": "Mr. White",
+    "Subject": "English",
+    "Classroom": "Room 105",
+    "Day": "Friday",
+    "Start_Time": "09:00",
+    "End_Time": "10:00"
+  },
+  {
+    "Teacher": "Ms. Davis",
+    "Subject": "History",
+    "Classroom": "Room 106",
+    "Day": "Friday",
+    "Start_Time": "10:00",
+    "End_Time": "11:00"
+  },
+  {
+    "Teacher": "Dr. Taylor",
+    "Subject": "Geography",
+    "Classroom": "Room 107",
+    "Day": "Friday",
+    "Start_Time": "11:00",
+    "End_Time": "12:00"
+  }
+]
