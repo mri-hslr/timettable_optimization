@@ -1,50 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Timetable Management System</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Timetable Management</title>
+  <link rel="stylesheet" href="styles.css" />
+
 </head>
 <body>
-  <header class="header">
-    <div class="container">
-      <h1 class="title">Timetable Management System</h1>
-      <p class="subtitle">Effortlessly Organize, Visualize, and Manage Schedules</p>
-      <a href="#features" class="cta-button">Explore Features</a>
-    </div>
-  </header>
-  
-  <section id="features" class="features-section">
-    <div class="container">
-      <h2>Why Choose Our System?</h2>
-      <p class="intro-text">Revolutionize the way you handle scheduling with powerful features designed for schools, colleges, and offices.</p>
-      <div class="features-grid">
-        <div class="feature-item">
-          <h3>Conflict Detection</h3>
-          <p>Automatic detection and resolution of scheduling conflicts for a seamless experience.</p>
-        </div>
-        <div class="feature-item">
-          <h3>Teacher & Room Availability</h3>
-          <p>Get real-time insights into teacher and room availability across different slots.</p>
-        </div>
-        <div class="feature-item">
-          <h3>Export Formats</h3>
-          <p>Export timetables to PDF and CSV formats for easy sharing and documentation.</p>
-        </div>
-        <div class="feature-item">
-          <h3>User-Friendly Interface</h3>
-          <p>An intuitive design that makes managing timetables simple and efficient.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2025 Timetable Management System. All rights reserved.</p>
-    </div>
-  </footer>
+  <h1>Timetable Form</h1>
+  <form id="timetableForm">
+    <input type="text" name="teacher" placeholder="Teacher Name" required />
+    <input type="text" name="subject" placeholder="Subject Name" required />
+    <input type="text" name="room" placeholder="Room Name" required />
+    <input type="text" name="time_slot" placeholder="Time Slot (e.g., 9:00-10:00)" required />
+    <input type="text" name="day" placeholder="Day (e.g., Monday)" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <button onclick="getSummary()">Get Summary</button>
+  <button onclick="optimize()">Optimize Timetable</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    const form = document.getElementById("timetableForm");
+    const output = document.getElementById("output");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = {
+        Teacher: formData.get("teacher"),
+        Subject: formData.get("subject"),
+        Room: formData.get("room"),
+        Time_slot: formData.get("time_slot"),
+        Day: formData.get("day")
+      };
+
+      try {
+        const res = await fetch("http://localhost:3500/timetable", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const json = await res.json();
+        alert("entries are saved")
+        output.textContent = JSON.stringify(json, null, 2);
+      } catch (err) {
+        output.textContent = "Error submitting timetable: " + err.message;
+      }
+    });
+
+    async function getSummary() {
+      const payload = {
+        group_by: "teacher",
+        view: "weekly",
+        start_date: new Date().toISOString().slice(0, 10)
+      };
+
+      try {
+        const res = await fetch("http://localhost:3500/summary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        console.log(res);
+
+        const json = await res.json();
+        console.log("after result");
+        console.log(json)
+        output.textContent = JSON.stringify(json, null, 2);
+      } catch (err) {
+        output.textContent = "Error fetching summary: " + err.message;
+      }
+    }
+
+    async function optimize() {
+      try {
+        const res = await fetch("http://localhost:3500/optimize_timetable", {
+          method: "POST"
+        });
+
+        const json = await res.json();
+        output.textContent = JSON.stringify(json, null, 2);
+      } catch (err) {
+        output.textContent = "Error optimizing timetable: " + err.message;
+      }
+    }
+  </script>
 </body>
 </html>
