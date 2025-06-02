@@ -2,93 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Timetable Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Timetable Management System</title>
   <link rel="stylesheet" href="styles.css" />
-
 </head>
 <body>
-  <h1>Timetable Form</h1>
-  <form id="timetableForm">
-    <input type="text" name="teacher" placeholder="Teacher Name" required />
-    <input type="text" name="subject" placeholder="Subject Name" required />
-    <input type="text" name="room" placeholder="Room Name" required />
-    <input type="text" name="time_slot" placeholder="Time Slot (e.g., 9:00-10:00)" required />
-    <input type="text" name="day" placeholder="Day (e.g., Monday)" required />
-    <button type="submit">Submit</button>
-  </form>
+  <div class="container">
+    <h1>Timetable Management System</h1>
+    
+    <h2>Add New Schedule Entry</h2>
+    <form id="timetableForm">
+      <input type="text" name="teacher" placeholder="Teacher Name" required />
+      <input type="text" name="subject" placeholder="Subject Name" required />
+      <input type="text" name="room" placeholder="Room Name" required />
+      <input type="text" name="time_slot" placeholder="Time Slot (e.g., 9:00-10:00)" required />
+      <input type="text" name="day" placeholder="Day (e.g., Monday)" required />
+      <button type="submit">Add Schedule Entry</button>
+    </form>
+  </div>
 
-  <button onclick="getSummary()">Get Summary</button>
-  <button onclick="optimize()">Optimize Timetable</button>
+  <div class="container">
+    <h2>Summary Controls</h2>
+    <div class="controls">
+      <select id="groupBy">
+        <option value="teacher">Group by Teacher</option>
+        <option value="subject">Group by Subject</option>
+        <option value="room">Group by Room</option>
+      </select>
+      
+      <select id="viewType">
+        <option value="weekly">Weekly View</option>
+        <option value="daily">Daily View</option>
+      </select>
+      
+      <input type="date" id="startDate" />
+      <button id="summaryButton" type="button">Get Summary</button>
+      <button id="optimizeButton" type="button">Optimize Timetable</button>
+    </div>
+  </div>
 
-  <pre id="output"></pre>
+  <div class="container">
+    <h2>Results</h2>
+    <div id="output"></div>
+  </div>
 
-  <script>
-    const form = document.getElementById("timetableForm");
-    const output = document.getElementById("output");
+  <div class="container" id="plotSection" style="display: none;">
+    <h2>Session Distribution</h2>
+    <div class="plot-wrapper">
+      <img id="sessionPlot" src="sessions_plot.png" alt="Sessions per Weekday" />
+    </div>
+  </div>
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const data = {
-        Teacher: formData.get("teacher"),
-        Subject: formData.get("subject"),
-        Room: formData.get("room"),
-        Time_slot: formData.get("time_slot"),
-        Day: formData.get("day")
-      };
-
-      try {
-        const res = await fetch("http://localhost:3500/timetable", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-
-        const json = await res.json();
-        alert("entries are saved")
-        output.textContent = JSON.stringify(json, null, 2);
-      } catch (err) {
-        output.textContent = "Error submitting timetable: " + err.message;
-      }
-    });
-
-    async function getSummary() {
-      const payload = {
-        group_by: "teacher",
-        view: "weekly",
-        start_date: new Date().toISOString().slice(0, 10)
-      };
-
-      try {
-        const res = await fetch("http://localhost:3500/summary", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        console.log(res);
-
-        const json = await res.json();
-        console.log("after result");
-        console.log(json)
-        output.textContent = JSON.stringify(json, null, 2);
-      } catch (err) {
-        output.textContent = "Error fetching summary: " + err.message;
-      }
-    }
-
-    async function optimize() {
-      try {
-        const res = await fetch("http://localhost:3500/optimize_timetable", {
-          method: "POST"
-        });
-
-        const json = await res.json();
-        output.textContent = JSON.stringify(json, null, 2);
-      } catch (err) {
-        output.textContent = "Error optimizing timetable: " + err.message;
-      }
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

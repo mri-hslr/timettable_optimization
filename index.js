@@ -6,8 +6,7 @@ import { writeFile } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import cors from "cors"
-
+import cors from "cors";
 
 // These two lines define __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -15,7 +14,11 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
+
+// Add full absolute path to Rscript executable here:
+const R_SCRIPT_EXEC = "/usr/local/bin/Rscript";
+
 app.post("/timetable", async function (req, res) {
   const Teacher = req.body.Teacher;
   const Subject = req.body.Subject;
@@ -73,12 +76,7 @@ app.post("/timetable", async function (req, res) {
   }
 });
 
-// genetic algo api call
-
-
 // summariser api call
-// Updated summary endpoint for your Express app
-
 app.post("/summary", async (req, res) => {
   const {
     group_by = "teacher",
@@ -87,6 +85,8 @@ app.post("/summary", async (req, res) => {
   } = req.body;
 
   console.log(`Received summary request: group_by=${group_by}, view=${view}, start_date=${start_date}`);
+
+  
 
   try {
     const sessions = await timetablemodel
@@ -100,31 +100,32 @@ app.post("/summary", async (req, res) => {
     if (!sessions || sessions.length === 0) {
       return res.status(404).json({ error: "No timetable sessions found" });
     }
-
-    // Log the first session to debug what data structure we're working with
+    console.log("Sample s.Day?.Day values:", sessions.map(s => s.Day?.Day).slice(0,5));
 
     const csvData = sessions.map((s) => ({
       teacherId: s.Teacher?.name || "unknown",
       subjectId: s.Subject?.name || "unknown",
       roomId: s.Room?.name || "unknown",
       date: s.Day?.Day || "unknown",
-      time: s.Time_slot?.time || "unknown"
+      time_slot: s.Time_slot?.time || "unknown"
     }));
+    console.log("Sample Day objects:", sessions.slice(0, 3).map(s => ({
+      dayField: s.Day,
+      dayValue: s.Day?.Day,
+      dayType: typeof s.Day?.Day
+    })));
 
-    const csvRows = ["teacherId,subjectId,roomId,date,time"];
+    const csvRows = ["teacherId,subjectId,roomId,date,time_slot"];
     for (const row of csvData) {
-      csvRows.push(`${row.teacherId},${row.subjectId},${row.roomId},${row.date},${row.time}`);
+      csvRows.push(`${row.teacherId},${row.subjectId},${row.roomId},${row.date},${row.time_slot}`);
     }
 
-    // Write CSV with newline at the end
     const csvPath = path.join(__dirname, "sessions.csv");
     await writeFile(csvPath, csvRows.join("\n") + "\n");
 
-    // Make sure the date is in YYYY-MM-DD format
     let formattedDate = start_date;
     if (start_date) {
       try {
-        // Try to parse the date to ensure it's valid
         const dateObj = new Date(start_date);
         if (!isNaN(dateObj.getTime())) {
           formattedDate = dateObj.toISOString().slice(0, 10);
@@ -138,10 +139,9 @@ app.post("/summary", async (req, res) => {
 
     console.log(`Running R script with: group_by=${group_by}, view=${view}, start_date=${formattedDate}`);
 
-    // Get the path to the R script
     const rScriptPath = path.join(__dirname, "summarize.R");
-    
-    // Make the R script executable (for Unix-like systems)
+
+    // Try to make the R script executable, but continue anyway if error
     try {
       await new Promise((resolve, reject) => {
         exec(`chmod +x "${rScriptPath}"`, (error) => {
@@ -155,21 +155,20 @@ app.post("/summary", async (req, res) => {
       console.warn("Error in chmod operation:", chmodErr);
     }
 
-    // Execute the R script with proper arguments
     exec(
-      `Rscript "${rScriptPath}" "${group_by}" "${view}" "${formattedDate}"`,
+      `${R_SCRIPT_EXEC} "${rScriptPath}" "${group_by}" "${view}" "${formattedDate}"`,
       { timeout: 10000, encoding: "utf-8" },
       (error, stdout, stderr) => {
         if (stderr) {
           console.warn("R stderr:", stderr);
         }
-        
+
         if (error) {
           console.error("Error running R script:", error.message);
-          return res.status(500).json({ 
-            error: "Failed to generate summary", 
+          return res.status(500).json({
+            error: "Failed to generate summary",
             details: error.message,
-            command: `Rscript "${rScriptPath}" "${group_by}" "${view}" "${formattedDate}"`
+            command: `${R_SCRIPT_EXEC} "${rScriptPath}" "${group_by}" "${view}" "${formattedDate}"`
           });
         }
 
@@ -177,10 +176,10 @@ app.post("/summary", async (req, res) => {
           const result = JSON.parse(stdout);
           return res.json(result);
         } catch (parseErr) {
-          return res.status(500).json({ 
-            error: "Invalid output from R script", 
+          return res.status(500).json({
+            error: "Invalid output from R script",
             raw: stdout,
-            parseError: parseErr.message 
+            parseError: parseErr.message
           });
         }
       }
@@ -201,13 +200,12 @@ app.post("/optimize_timetable", async function (req, res) {
       .populate("Room")
       .populate("Time_slot")
       .populate("Day");
-    console.log(sessions);
+
     const jsonData = sessions.map((s) => ({
       Teacher: s.Teacher?.name || "unknown",
       Subject: s.Subject?.name || "unknown",
       Room: s.Room?.name || "unknown",
     }));
-    console.log(jsonData);
 
     const inputPath = path.join(__dirname, "input_schedule.json");
     fs.writeFileSync(inputPath, JSON.stringify(jsonData));
@@ -216,7 +214,7 @@ app.post("/optimize_timetable", async function (req, res) {
     const rScriptPath = path.join(__dirname, "optimize.R");
 
     exec(
-      `Rscript "${rScriptPath}" "${inputPath}"`,
+      `${R_SCRIPT_EXEC} "${rScriptPath}" "${inputPath}"`,
       { timeout: 10000, encoding: "utf-8" },
       (error, stdout, stderr) => {
         console.log("STDOUT:", stdout);
